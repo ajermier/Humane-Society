@@ -39,7 +39,7 @@ namespace HumaneSocietyConsole
         }
         private void DisplayAnimalInfo(Animal animal)
         {
-            var room = Connection.GetRoom(animal.AnimalID);
+            var room = Connection.GetRoom(animal);
             AnimalInfoNewPage();
             Console.WriteLine($"Animal ID: {animal.AnimalID}");
             Console.WriteLine($"Species: {animal.AnimalSpecy.SpeciesName}");
@@ -64,7 +64,8 @@ namespace HumaneSocietyConsole
             Console.WriteLine(" 2 - Weight");
             Console.WriteLine(" 3 - Food");
             Console.WriteLine(" 4 - Shots");
-            Console.WriteLine(" 5 - Exit");
+            Console.WriteLine(" 5 - Room");
+            Console.WriteLine(" 6 - Exit");
             NavigateUpdateMenu(UI.GetInt("Your Selection: "), animal);
         }
         private void NavigateUpdateMenu(int selection, Animal animal)
@@ -92,6 +93,12 @@ namespace HumaneSocietyConsole
                     NavigateUpdateMenu(UI.GetInt("Your Selection: "), animal);
                     break;
                 case 5:
+                    var temp = Connection.GetRoom(animal);
+                    AssignRoom(animal);
+                    Connection.RemoveAnimalFromRoom(temp);
+                    NavigateUpdateMenu(UI.GetInt("Your Selection: "), animal);
+                    break;
+                case 6:
                     Console.Clear();
                     UI.DisplayMainMenu();
                     break;

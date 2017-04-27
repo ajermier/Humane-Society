@@ -8,7 +8,7 @@ namespace HumaneSocietyConsole
 {
     static class Connection
     {
-        public static int SaveAnimalToDatabase(int species, string name, string sex, int age, double weight, string color, double food, bool shots, bool adopted )
+        public static Animal SaveAnimalToDatabase(int species, string name, string sex, int age, double weight, string color, double food, bool shots, bool adopted )
         {
             DatabaseConnectionDataContext database = new DatabaseConnectionDataContext();
 
@@ -34,9 +34,35 @@ namespace HumaneSocietyConsole
                 Console.Write(e);
             }
 
-            return newAnimal.AnimalID;
+            return newAnimal;
         }
-        public static bool SaveRoomToDatabase(int animalID, int roomID)
+        public static int SaveAdopterToDatabase(string name, string phone, bool homeOwner, bool newPetOwner, string bio)
+        {
+            DatabaseConnectionDataContext database = new DatabaseConnectionDataContext();
+
+            Adopter newAdopter = new Adopter();
+            newAdopter.AdopterName = name;
+            newAdopter.AdopterPhone = phone;
+            newAdopter.AdopterHomeOwner = homeOwner;
+            newAdopter.AdopterNewPetOwner = newPetOwner;
+            newAdopter.AdopterBio = bio;
+
+            database.Adopters.InsertOnSubmit(newAdopter);
+
+            try
+            {
+                database.SubmitChanges();
+                Console.WriteLine($"New Adopter {newAdopter.AdopterName} successfully added.");
+            }
+            catch (Exception e)
+            {
+                Console.Write(e);
+                Console.WriteLine("Something went wrong while saving the new adopter to the database.");
+            }
+
+            return 1;
+        }
+        public static bool SaveRoomToDatabase(int? animalID, int roomID)
         {
             DatabaseConnectionDataContext database = new DatabaseConnectionDataContext();
 
@@ -59,6 +85,7 @@ namespace HumaneSocietyConsole
             try
             {
                 database.SubmitChanges();
+                Console.WriteLine($"Successfully moved {room.Animal.AnimalName} to room #{room.RoomID}");
             }
             catch
             {
@@ -67,34 +94,37 @@ namespace HumaneSocietyConsole
             return true;
 
         }
+        public static void RemoveAnimalFromRoom(int? roomID)
+        {
+            DatabaseConnectionDataContext database = new DatabaseConnectionDataContext();
+            var room = database.Rooms.Where(r => r.RoomID == roomID).Select(s => s).First();
+
+            room.AnimalID = null;
+            try
+            {
+                database.SubmitChanges();
+            }
+            catch
+            {
+                Console.WriteLine("Something went wrong while searching for Animal. Check ID.");
+            }
+        }
         public static void PrintAvailableRooms()
         {
             DatabaseConnectionDataContext database = new DatabaseConnectionDataContext();
 
-            var room = database.Rooms.Where(r => r.AnimalID == null).Select(s => s.RoomID.ToString());
+            var room = database.Rooms.Where(r => r.AnimalID == null).Select(s => s.RoomID.ToString()).ToList();
 
-            Console.WriteLine(room.Aggregate((x, y) => x + y));
+            Console.WriteLine(room.Aggregate((x, y) => x + ", " + y));
         }
         public static void PrintCurrentAnimals()
         {
             DatabaseConnectionDataContext database = new DatabaseConnectionDataContext();
 
-            var animals = database.Animals.Where(w => w.AnimalAdopted == false).Select(s => s.AnimalID.ToString() + " " + s.AnimalName.ToString() + " " 
-                            + (database.AnimalSpecies.Where(a => a.SpeciesID == s.AnimalSpecies).Select(a => a.SpeciesName).Single()) + " "
-                            + "Room #" + (database.Rooms.Where(b => b.AnimalID == s.AnimalID).Select(c => c.RoomID).Single().ToString()));
+            var animals = database.Animals.Where(w => w.AnimalAdopted == false).Select(s => s.AnimalID.ToString() + " " + s.AnimalName.ToString() + " "
+                            + s.AnimalSpecy.SpeciesName + "Room #" + database.Rooms.Where(a => a.AnimalID == s.AnimalID).Select(r => r.RoomID).First().ToString());
             Console.WriteLine(string.Join("\n", animals));
             Console.WriteLine();
-        }
-        public static void PrintAdoptedAnimals()
-        {
-            DatabaseConnectionDataContext database = new DatabaseConnectionDataContext();
-
-            var animals = database.Animals.Where(w => w.AnimalAdopted == true).Select(s => s.AnimalID.ToString() + " " + s.AnimalName.ToString() + " "
-                            + (database.AnimalSpecies.Where(a => a.SpeciesID == s.AnimalSpecies).Select(a => a.SpeciesName).Single()) + " "
-                            + "Room #" + (database.Rooms.Where(b => b.AnimalID == s.AnimalID).Select(c => c.RoomID).Single().ToString()));
-
-            Console.WriteLine("Adopted Animals");
-            Console.WriteLine(string.Join("\n", animals));
         }
         public static Animal GetAnimal(int animalID)
 
@@ -113,20 +143,19 @@ namespace HumaneSocietyConsole
                 return null;
             }
         }
-        public static int? GetRoom(int animalID)
+        public static int? GetRoom(Animal animal)
 
         {
             DatabaseConnectionDataContext database = new DatabaseConnectionDataContext();
 
             try
             {
-                var room = database.Rooms.Where(w => w.AnimalID == animalID).Select(s => s.RoomID).First();
+                var room = database.Rooms.Where(w => w.AnimalID == animal.AnimalID).Select(s => s).First();
 
-                return room;
+                return room.RoomID;
             }
             catch
             {
-                Console.WriteLine("Something went wrong while accessing the rooms table.");
                 return null;
             }
         }
@@ -150,6 +179,14 @@ namespace HumaneSocietyConsole
             {
                 Console.WriteLine("Something went wrong while updating the animal.");
             }
+        }
+        public static List<Animal> FilterBySpecies(int speciesCode)
+        {
+            DatabaseConnectionDataContext database = new DatabaseConnectionDataContext();
+
+            var list = database.Animals.Where(w => w.AnimalSpecies == speciesCode).Select(s => s).ToList();
+
+            return list;
         }
     }
 }

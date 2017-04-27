@@ -44,6 +44,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AdopterInfo.cs" />
     <Compile Include="Manager.cs" />
     <Compile Include="Connection.cs" />
     <Compile Include="DatabaseConnection.designer.cs">

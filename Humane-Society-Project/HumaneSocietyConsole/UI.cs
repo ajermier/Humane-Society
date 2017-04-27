@@ -100,10 +100,10 @@ namespace HumaneSocietyConsole
                     //
                     break;
                 case 6:
-                    //
+                    new AdopterInfo().AddAdopter();
                     break;
                 case 7:
-                    //
+                    new AdopterInfo().AdopterSearchMenu();
                     break;
                 case 8:
                     break;

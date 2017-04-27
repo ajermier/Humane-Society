@@ -18,7 +18,6 @@ namespace HumaneSocietyConsole
         private int room;
         private bool shots;
         private bool adopted;
-        private int animalID;
     
         public int Species { get { return species; } }
         public string Name { get { return name; } set { Name = value; } }
@@ -33,11 +32,11 @@ namespace HumaneSocietyConsole
 
         public Manager()
         {
-
         }
 
         public void GetNewAnimal()
         {
+            AddNewAnimalPage();
             species = GetSpecies();
             name = UI.GetString("Enter name: ");
             sex = GetSex();
@@ -47,11 +46,10 @@ namespace HumaneSocietyConsole
             food = UI.GetDouble("Enter lbs. of food consumed per week: ");
             shots = UI.GetYesNoBool("Recieved immunizations ");
             adopted = false;
-            GetNewAnimal();
-            animalID = Connection.SaveAnimalToDatabase(Species, Name, Sex, Age, Weight, Color, Food, Shots, Adopted);
-            room = AssignRoom(animalID);
+            var animal = Connection.SaveAnimalToDatabase(Species, Name, Sex, Age, Weight, Color, Food, Shots, Adopted);
+            room = AssignRoom(animal);
         }
-        private string GetSex()
+        protected string GetSex()
         {
             string input;
 
@@ -70,7 +68,7 @@ namespace HumaneSocietyConsole
                     return GetSex();
             }
         }
-        private int GetSpecies()
+        protected int GetSpecies()
         {
             string input;
             int speciesCode = 0;
@@ -116,15 +114,21 @@ namespace HumaneSocietyConsole
             }
             return speciesCode;
         }
-        private int AssignRoom(int animalID)
+        protected int AssignRoom(Animal animal)
         {
+
             room = UI.GetInt("Enter room number (1-250): ");
-            while (!Connection.SaveRoomToDatabase(animalID, room))
+
+            while (!Connection.SaveRoomToDatabase(animal.AnimalID, room))
             {
                 room = UI.GetInt("Enter room number: ");
             }
-            return room;
-        
+            return room;       
+        }
+        private void AddNewAnimalPage()
+        {
+            Console.Clear();
+            Console.WriteLine("----------ADD NEW ANIMAL---------");
         }
     }
 }
