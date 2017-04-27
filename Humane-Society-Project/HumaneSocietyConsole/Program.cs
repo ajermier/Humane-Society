@@ -10,8 +10,7 @@ namespace HumaneSocietyConsole
     {
         static void Main(string[] args)
         {
-            AddAnimal addAnimal = new AddAnimal();
-            Console.ReadLine();
+            UI.DisplayMainMenu();
         }
     }
 }

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace HumaneSocietyConsole
 {
-    class AddAnimal : IAnimal
+    class Manager : IAnimal
     {
         private int species;
         private string name;
@@ -31,11 +31,9 @@ namespace HumaneSocietyConsole
         public bool Shots { get { return shots; } set { Shots = value; } }
         public bool Adopted { get { return adopted; } set { Adopted = value; } }
 
-        public AddAnimal()
+        public Manager()
         {
-            GetNewAnimal();
-            animalID = Connection.SaveAnimalToDatabase(Species, Name, Sex, Age, Weight, Color, Food, Shots, Adopted);
-            room = AssignRoom(animalID);
+
         }
 
         public void GetNewAnimal()
@@ -49,6 +47,9 @@ namespace HumaneSocietyConsole
             food = UI.GetDouble("Enter lbs. of food consumed per week: ");
             shots = UI.GetYesNoBool("Recieved immunizations ");
             adopted = false;
+            GetNewAnimal();
+            animalID = Connection.SaveAnimalToDatabase(Species, Name, Sex, Age, Weight, Color, Food, Shots, Adopted);
+            room = AssignRoom(animalID);
         }
         private string GetSex()
         {
@@ -117,7 +118,7 @@ namespace HumaneSocietyConsole
         }
         private int AssignRoom(int animalID)
         {
-            room = UI.GetInt("Enter room number: ");
+            room = UI.GetInt("Enter room number (1-250): ");
             while (!Connection.SaveRoomToDatabase(animalID, room))
             {
                 room = UI.GetInt("Enter room number: ");
