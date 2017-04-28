@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace HumaneSocietyConsole
 {
-    class AdopterInfo: Manager
+    partial class Manager : IAnimal
     {
-        private string name;
+        private string adopterName;
         private string phone;
         private bool homeOwner;
         private bool newPetOwner;
@@ -16,37 +16,44 @@ namespace HumaneSocietyConsole
         private int count = 0;
         private List<Animal> searchList;
 
-        public AdopterInfo()
-        {
-            
-        }
-
-        public void AddAdopter()
+        public void AddAdopter(Manager manager)
         {
             AddAdopterPage();
             GetAdopterInfo();
-            Connection.SaveAdopterToDatabase(name, phone, homeOwner, newPetOwner, bio);
+            Connection.SaveAdopterToDatabase(adopterName, phone, homeOwner, newPetOwner, bio);
             Console.Write("Press Enter to return to Main Menu.");
             Console.ReadLine();
             Console.Clear();
             UI.DisplayMainMenu();
         }
+        public Adopter AddNewAdopter(Manager manager)
+        {
+            AddAdopterPage();
+            GetAdopterInfo();
+            var adopter = Connection.SaveAdopterToDatabase(adopterName, phone, homeOwner, newPetOwner, bio);
+            Console.Write("Press Enter to return.");
+            Console.ReadLine();
+            Console.Clear();
+            return adopter;
+        }
         private void GetAdopterInfo()
         {
-            name = UI.GetString("Enter name: ");
+            adopterName = UI.GetString("Enter name: ");
             phone = UI.GetString("Enter phone number: ");
             homeOwner = UI.GetYesNoBool("Owns/Rents house ");
             newPetOwner = UI.GetYesNoBool("New pet owner ");
             bio = UI.GetString("Enter adopter bio: ");
         }
-        public void AdopterSearchMenu()
+        public void AdopterSearchMenu(Manager manager)
         {
             if (count < 1) AdopterSearchPage();
             if (count < 4) Console.WriteLine(" 1 - Refine Search");
-            Console.WriteLine(" 2 - Exit");
-            NavigateAdopterSearchMenu(UI.GetInt("Your Selection: "), count);
+            Console.WriteLine(" 2 - Select animal from list to adopt");
+            Console.WriteLine(" 3 - Exit");
+            int input = UI.GetInt("Your Selection: ");
+            NavigateAdopterSearchMenu(input);
         }
-        private void NavigateAdopterSearchMenu(int selection, int count)
+        private void NavigateAdopterSearchMenu(int selection)
         {
             switch (selection)
             {
@@ -57,7 +64,7 @@ namespace HumaneSocietyConsole
                         searchList = Connection.FilterBySpecies(GetSpecies());
                         DisplaySearchResults(searchList);
                         count++;
-                        AdopterSearchMenu();
+                        AdopterSearchMenu(this);
                     }
                     else if(count < 2)
                     {
@@ -65,7 +72,7 @@ namespace HumaneSocietyConsole
                         searchList = FilterBySex(GetSex(), searchList);
                         DisplaySearchResults(searchList);
                         count++;
-                        AdopterSearchMenu();
+                        AdopterSearchMenu(this);
                     }
                     else if(count < 3)
                     {
@@ -73,16 +80,20 @@ namespace HumaneSocietyConsole
                         searchList = FilterByAge(UI.GetInt("Enter maximum age to search for: "), searchList);
                         DisplaySearchResults(searchList);
                         count++;
-                        AdopterSearchMenu();
+                        AdopterSearchMenu(this);
                     }
                     break;
                 case 2:
+                    DisplaySelectFromList(searchList);
+                    AdoptAnimal(GetAnimalID(searchList));
+                    break;
+                case 3:
                     Console.Clear();
                     UI.DisplayMainMenu();
                     break;
                 default:
                     Console.WriteLine("Invalid input. Try again.");
-                    NavigateAdopterSearchMenu(UI.GetInt("Your Selection: "), count);
+                    NavigateAdopterSearchMenu(UI.GetInt("Your Selection: "));
                     break;
             }
         }
@@ -115,6 +126,46 @@ namespace HumaneSocietyConsole
                     Console.WriteLine($"ID {a.AnimalID} is a {a.AnimalColor} {a.AnimalSpecy.SpeciesName} named {a.AnimalName} who is a {a.AnimalAge} year old {a.AnimalSex}.");
                 }
             }
+        }
+        private void DisplaySelectFromList(List<Animal> list)
+        {
+            Console.WriteLine();
+            if (list.Count == 0)
+            {
+                Console.Write("Sorry we have no animals on record. Press enter to return to Main Menu.");
+                Console.ReadLine();
+                Console.Clear();
+                UI.DisplayMainMenu();
+            }
+            else
+            {
+                foreach (Animal a in list)
+                {              
+                    Console.WriteLine($"ID# {a.AnimalID} {a.AnimalName}.");
+                }
+            }
+        }
+        private Adopter GetAdopter()
+        {
+            if(UI.GetYesNoBool("Is the adopter in the system "))
+            {
+                int adopterID = UI.GetInt("Enter adopter's ID: ");
+                var adopter = Connection.GetAdopter(adopterID);
+                if (adopter == null)
+                {
+                    Console.WriteLine("Invalid ID. Try again.");
+                    return GetAdopter();
+                }
+                return adopter;
+            }
+            else
+            {              
+                return AddNewAdopter(this);
+            }
+        }
+        private void SelectFromList(List<Animal> list)
+        {
+            Console.WriteLine();
         }
         private void AddAdopterPage()
         {

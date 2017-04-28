@@ -6,36 +6,43 @@ using System.Threading.Tasks;
 
 namespace HumaneSocietyConsole
 {
-    class AnimalInfo : Manager
+    partial class Manager : IAnimal
     {
-        public AnimalInfo()
-        {
-        }
-
-        public void UpdateAnimal()
+        public void UpdateAnimal(Manager manager)
         {
             UpdateAnimalNewPage();
+            PrintUnadoptedAnimals();
             DisplayUpdateMenu(GetAnimalID());
         }
-        public void GetAnimalInfo()
+        public void GetAnimalInfo(Manager manager)
         {
             AnimalInfoNewPage();
+            PrintAdoptedAnimals();
+            PrintUnadoptedAnimals();
             var animal = GetAnimalID();
             DisplayAnimalInfo(animal);
         }
 
-        private Animal GetAnimalID()
+        public Animal GetAnimalID()
         {
-            Console.WriteLine("Animals:");
-            Connection.PrintCurrentAnimals();
             var animal = Connection.GetAnimal(UI.GetInt("Select ID: "));
 
             while(animal == null)
             {
                 animal = Connection.GetAnimal(UI.GetInt("Select ID: "));
             }
-
+            selectedAnimalID = animal.AnimalID;
             return animal;
+        }
+        public int GetAnimalID(List<Animal> list)
+        { 
+            int selection = UI.GetInt("Select ID: ");
+
+            while (!list.Exists(a => a.AnimalID == selection))
+            {
+                selection = UI.GetInt("Error: ID not found. Select ID: ");
+            }
+            return selection;
         }
         private void DisplayAnimalInfo(Animal animal)
         {
@@ -46,11 +53,13 @@ namespace HumaneSocietyConsole
             Console.WriteLine($"Name: {animal.AnimalName}");
             Console.WriteLine($"Gender: {animal.AnimalSex}");
             Console.WriteLine($"Age: {animal.AnimalAge} years");
-            Console.WriteLine($"Weight: {animal.AnimalWeight} lbs");
+            if (animal.AnimalAdopted == false) Console.WriteLine($"Weight: {animal.AnimalWeight} lbs");
             Console.WriteLine($"Color: {animal.AnimalColor}");
-            Console.WriteLine($"Food: {animal.AnimalFood} lbs/wk");
+            if (animal.AnimalAdopted == false) Console.WriteLine($"Food: {animal.AnimalFood} lbs/wk");
             Console.WriteLine($"Immunizations Recieved: {animal.AnimalShots}");
-            Console.WriteLine($"Room: {room}");
+            if (animal.AnimalAdopted == false) Console.WriteLine($"Room: {room.RoomID}");
+            if (animal.AnimalAdopted == true) Console.WriteLine($"Adopted by: {animal.Adopter.AdopterName}");
+            if (animal.AnimalAdopted == true) Console.WriteLine($"Adopter ID: {animal.Adopter.AdopterID}");
             Console.WriteLine();
             Console.Write("Press Enter to return to Main Menu.");
             Console.ReadLine();
@@ -95,7 +104,7 @@ namespace HumaneSocietyConsole
                 case 5:
                     var temp = Connection.GetRoom(animal);
                     AssignRoom(animal);
-                    Connection.RemoveAnimalFromRoom(temp);
+                    Connection.RemoveAnimalFromRoom(temp.RoomID);
                     NavigateUpdateMenu(UI.GetInt("Your Selection: "), animal);
                     break;
                 case 6:
@@ -107,6 +116,16 @@ namespace HumaneSocietyConsole
                     NavigateUpdateMenu(UI.GetInt("Your Selection: "), animal);
                     break;
             }
+        }
+        private void PrintAdoptedAnimals()
+        {
+            Console.WriteLine("Adopted Animals: ");
+            Connection.PrintAnimals(true);
+        }
+        private void PrintUnadoptedAnimals()
+        {
+            Console.WriteLine("Unadopted Animals: ");
+            Connection.PrintAnimals(false);
         }
         private void UpdateAnimalNewPage()
         {

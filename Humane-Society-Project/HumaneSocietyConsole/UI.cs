@@ -74,10 +74,9 @@ namespace HumaneSocietyConsole
             Console.WriteLine(" 2 - Import Animals From CSV");
             Console.WriteLine(" 3 - Update Existing Animal");
             Console.WriteLine(" 4 - Display Animal Information");
-            Console.WriteLine(" 5 - Adopt Animal");
-            Console.WriteLine(" 6 - Add Adopter");
-            Console.WriteLine(" 7 - Search For Animals");
-            Console.WriteLine(" 8 - Exit");
+            Console.WriteLine(" 5 - Add Adopter");
+            Console.WriteLine(" 6 - Search/Adopt Animals");
+            Console.WriteLine(" 7 - Exit");
             NavigateMainMenu(UI.GetInt("Your Selection: "));
         }
         private static void NavigateMainMenu(int selection)
@@ -85,27 +84,29 @@ namespace HumaneSocietyConsole
             switch (selection)
             {
                 case 1:
-                    new Manager().GetNewAnimal();
+                    Manager newSession1 = new Manager();
+                    newSession1.GetNewAnimal();
                     break;
                 case 2:
                     //
                     break;
                 case 3:
-                    new AnimalInfo().UpdateAnimal();
+                    Manager newSession3 = new Manager();
+                    newSession3.UpdateAnimal(newSession3);
                     break;
                 case 4:
-                    new AnimalInfo().GetAnimalInfo();
+                    Manager newSession4 = new Manager();
+                    newSession4.GetAnimalInfo(newSession4);
                     break;
                 case 5:
-                    //
+                    Manager newSession5 = new Manager();
+                    newSession5.AddAdopter(newSession5);
                     break;
                 case 6:
-                    new AdopterInfo().AddAdopter();
+                    Manager newSession6 = new Manager();
+                    newSession6.AdopterSearchMenu(newSession6);
                     break;
                 case 7:
-                    new AdopterInfo().AdopterSearchMenu();
-                    break;
-                case 8:
                     break;
                 default:
                     NavigateMainMenu(UI.GetInt("Invalid selection. Try again: "));

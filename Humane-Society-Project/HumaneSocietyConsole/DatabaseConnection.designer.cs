@@ -33,15 +33,15 @@ namespace HumaneSocietyConsole
     partial void InsertAnimal(Animal instance);
     partial void UpdateAnimal(Animal instance);
     partial void DeleteAnimal(Animal instance);
-    partial void InsertAnimalSpecy(AnimalSpecy instance);
-    partial void UpdateAnimalSpecy(AnimalSpecy instance);
-    partial void DeleteAnimalSpecy(AnimalSpecy instance);
     partial void InsertRoom(Room instance);
     partial void UpdateRoom(Room instance);
     partial void DeleteRoom(Room instance);
     partial void InsertAdopter(Adopter instance);
     partial void UpdateAdopter(Adopter instance);
     partial void DeleteAdopter(Adopter instance);
+    partial void InsertAnimalSpecy(AnimalSpecy instance);
+    partial void UpdateAnimalSpecy(AnimalSpecy instance);
+    partial void DeleteAnimalSpecy(AnimalSpecy instance);
     #endregion
 		
 		public DatabaseConnectionDataContext() : 
@@ -82,14 +82,6 @@ namespace HumaneSocietyConsole
 			}
 		}
 		
-		public System.Data.Linq.Table<AnimalSpecy> AnimalSpecies
-		{
-			get
-			{
-				return this.GetTable<AnimalSpecy>();
-			}
-		}
-		
 		public System.Data.Linq.Table<Room> Rooms
 		{
 			get
@@ -103,6 +95,14 @@ namespace HumaneSocietyConsole
 			get
 			{
 				return this.GetTable<Adopter>();
+			}
+		}
+		
+		public System.Data.Linq.Table<AnimalSpecy> AnimalSpecies
+		{
+			get
+			{
+				return this.GetTable<AnimalSpecy>();
 			}
 		}
 	}
@@ -137,9 +137,9 @@ namespace HumaneSocietyConsole
 		
 		private EntitySet<Room> _Rooms;
 		
-		private EntityRef<AnimalSpecy> _AnimalSpecy;
-		
 		private EntityRef<Adopter> _Adopter;
+		
+		private EntityRef<AnimalSpecy> _AnimalSpecy;
 		
     #region Extensibility Method Definitions
     partial void OnLoaded();
@@ -172,8 +172,8 @@ namespace HumaneSocietyConsole
 		public Animal()
 		{
 			this._Rooms = new EntitySet<Room>(new Action<Room>(this.attach_Rooms), new Action<Room>(this.detach_Rooms));
-			this._AnimalSpecy = default(EntityRef<AnimalSpecy>);
 			this._Adopter = default(EntityRef<Adopter>);
+			this._AnimalSpecy = default(EntityRef<AnimalSpecy>);
 			OnCreated();
 		}
 		
@@ -418,40 +418,6 @@ namespace HumaneSocietyConsole
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="AnimalSpecy_Animal", Storage="_AnimalSpecy", ThisKey="AnimalSpecies", OtherKey="SpeciesID", IsForeignKey=true)]
-		public AnimalSpecy AnimalSpecy
-		{
-			get
-			{
-				return this._AnimalSpecy.Entity;
-			}
-			set
-			{
-				AnimalSpecy previousValue = this._AnimalSpecy.Entity;
-				if (((previousValue != value) 
-							|| (this._AnimalSpecy.HasLoadedOrAssignedValue == false)))
-				{
-					this.SendPropertyChanging();
-					if ((previousValue != null))
-					{
-						this._AnimalSpecy.Entity = null;
-						previousValue.Animals.Remove(this);
-					}
-					this._AnimalSpecy.Entity = value;
-					if ((value != null))
-					{
-						value.Animals.Add(this);
-						this._AnimalSpecies = value.SpeciesID;
-					}
-					else
-					{
-						this._AnimalSpecies = default(int);
-					}
-					this.SendPropertyChanged("AnimalSpecy");
-				}
-			}
-		}
-		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Adopter_Animal", Storage="_Adopter", ThisKey="AnimalAdopterID", OtherKey="AdopterID", IsForeignKey=true)]
 		public Adopter Adopter
 		{
@@ -486,6 +452,40 @@ namespace HumaneSocietyConsole
 			}
 		}
 		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="AnimalSpecy_Animal", Storage="_AnimalSpecy", ThisKey="AnimalSpecies", OtherKey="SpeciesID", IsForeignKey=true)]
+		public AnimalSpecy AnimalSpecy
+		{
+			get
+			{
+				return this._AnimalSpecy.Entity;
+			}
+			set
+			{
+				AnimalSpecy previousValue = this._AnimalSpecy.Entity;
+				if (((previousValue != value) 
+							|| (this._AnimalSpecy.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._AnimalSpecy.Entity = null;
+						previousValue.Animals.Remove(this);
+					}
+					this._AnimalSpecy.Entity = value;
+					if ((value != null))
+					{
+						value.Animals.Add(this);
+						this._AnimalSpecies = value.SpeciesID;
+					}
+					else
+					{
+						this._AnimalSpecies = default(int);
+					}
+					this.SendPropertyChanged("AnimalSpecy");
+				}
+			}
+		}
+		
 		public event PropertyChangingEventHandler PropertyChanging;
 		
 		public event PropertyChangedEventHandler PropertyChanged;
@@ -516,120 +516,6 @@ namespace HumaneSocietyConsole
 		{
 			this.SendPropertyChanging();
 			entity.Animal = null;
-		}
-	}
-	
-	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.AnimalSpecies")]
-	public partial class AnimalSpecy : INotifyPropertyChanging, INotifyPropertyChanged
-	{
-		
-		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
-		
-		private int _SpeciesID;
-		
-		private string _SpeciesName;
-		
-		private EntitySet<Animal> _Animals;
-		
-    #region Extensibility Method Definitions
-    partial void OnLoaded();
-    partial void OnValidate(System.Data.Linq.ChangeAction action);
-    partial void OnCreated();
-    partial void OnSpeciesIDChanging(int value);
-    partial void OnSpeciesIDChanged();
-    partial void OnSpeciesNameChanging(string value);
-    partial void OnSpeciesNameChanged();
-    #endregion
-		
-		public AnimalSpecy()
-		{
-			this._Animals = new EntitySet<Animal>(new Action<Animal>(this.attach_Animals), new Action<Animal>(this.detach_Animals));
-			OnCreated();
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_SpeciesID", AutoSync=AutoSync.OnInsert, DbType="Int NOT NULL IDENTITY", IsPrimaryKey=true, IsDbGenerated=true)]
-		public int SpeciesID
-		{
-			get
-			{
-				return this._SpeciesID;
-			}
-			set
-			{
-				if ((this._SpeciesID != value))
-				{
-					this.OnSpeciesIDChanging(value);
-					this.SendPropertyChanging();
-					this._SpeciesID = value;
-					this.SendPropertyChanged("SpeciesID");
-					this.OnSpeciesIDChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_SpeciesName", DbType="VarChar(255)")]
-		public string SpeciesName
-		{
-			get
-			{
-				return this._SpeciesName;
-			}
-			set
-			{
-				if ((this._SpeciesName != value))
-				{
-					this.OnSpeciesNameChanging(value);
-					this.SendPropertyChanging();
-					this._SpeciesName = value;
-					this.SendPropertyChanged("SpeciesName");
-					this.OnSpeciesNameChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="AnimalSpecy_Animal", Storage="_Animals", ThisKey="SpeciesID", OtherKey="AnimalSpecies")]
-		public EntitySet<Animal> Animals
-		{
-			get
-			{
-				return this._Animals;
-			}
-			set
-			{
-				this._Animals.Assign(value);
-			}
-		}
-		
-		public event PropertyChangingEventHandler PropertyChanging;
-		
-		public event PropertyChangedEventHandler PropertyChanged;
-		
-		protected virtual void SendPropertyChanging()
-		{
-			if ((this.PropertyChanging != null))
-			{
-				this.PropertyChanging(this, emptyChangingEventArgs);
-			}
-		}
-		
-		protected virtual void SendPropertyChanged(String propertyName)
-		{
-			if ((this.PropertyChanged != null))
-			{
-				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
-			}
-		}
-		
-		private void attach_Animals(Animal entity)
-		{
-			this.SendPropertyChanging();
-			entity.AnimalSpecy = this;
-		}
-		
-		private void detach_Animals(Animal entity)
-		{
-			this.SendPropertyChanging();
-			entity.AnimalSpecy = null;
 		}
 	}
 	
@@ -967,6 +853,144 @@ namespace HumaneSocietyConsole
 		{
 			this.SendPropertyChanging();
 			entity.Adopter = null;
+		}
+	}
+	
+	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.AnimalSpecies")]
+	public partial class AnimalSpecy : INotifyPropertyChanging, INotifyPropertyChanged
+	{
+		
+		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
+		
+		private int _SpeciesID;
+		
+		private string _SpeciesName;
+		
+		private decimal _AdoptionCost;
+		
+		private EntitySet<Animal> _Animals;
+		
+    #region Extensibility Method Definitions
+    partial void OnLoaded();
+    partial void OnValidate(System.Data.Linq.ChangeAction action);
+    partial void OnCreated();
+    partial void OnSpeciesIDChanging(int value);
+    partial void OnSpeciesIDChanged();
+    partial void OnSpeciesNameChanging(string value);
+    partial void OnSpeciesNameChanged();
+    partial void OnAdoptionCostChanging(decimal value);
+    partial void OnAdoptionCostChanged();
+    #endregion
+		
+		public AnimalSpecy()
+		{
+			this._Animals = new EntitySet<Animal>(new Action<Animal>(this.attach_Animals), new Action<Animal>(this.detach_Animals));
+			OnCreated();
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_SpeciesID", AutoSync=AutoSync.OnInsert, DbType="Int NOT NULL IDENTITY", IsPrimaryKey=true, IsDbGenerated=true)]
+		public int SpeciesID
+		{
+			get
+			{
+				return this._SpeciesID;
+			}
+			set
+			{
+				if ((this._SpeciesID != value))
+				{
+					this.OnSpeciesIDChanging(value);
+					this.SendPropertyChanging();
+					this._SpeciesID = value;
+					this.SendPropertyChanged("SpeciesID");
+					this.OnSpeciesIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_SpeciesName", DbType="VarChar(255)")]
+		public string SpeciesName
+		{
+			get
+			{
+				return this._SpeciesName;
+			}
+			set
+			{
+				if ((this._SpeciesName != value))
+				{
+					this.OnSpeciesNameChanging(value);
+					this.SendPropertyChanging();
+					this._SpeciesName = value;
+					this.SendPropertyChanged("SpeciesName");
+					this.OnSpeciesNameChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_AdoptionCost", DbType="Money NOT NULL")]
+		public decimal AdoptionCost
+		{
+			get
+			{
+				return this._AdoptionCost;
+			}
+			set
+			{
+				if ((this._AdoptionCost != value))
+				{
+					this.OnAdoptionCostChanging(value);
+					this.SendPropertyChanging();
+					this._AdoptionCost = value;
+					this.SendPropertyChanged("AdoptionCost");
+					this.OnAdoptionCostChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="AnimalSpecy_Animal", Storage="_Animals", ThisKey="SpeciesID", OtherKey="AnimalSpecies")]
+		public EntitySet<Animal> Animals
+		{
+			get
+			{
+				return this._Animals;
+			}
+			set
+			{
+				this._Animals.Assign(value);
+			}
+		}
+		
+		public event PropertyChangingEventHandler PropertyChanging;
+		
+		public event PropertyChangedEventHandler PropertyChanged;
+		
+		protected virtual void SendPropertyChanging()
+		{
+			if ((this.PropertyChanging != null))
+			{
+				this.PropertyChanging(this, emptyChangingEventArgs);
+			}
+		}
+		
+		protected virtual void SendPropertyChanged(String propertyName)
+		{
+			if ((this.PropertyChanged != null))
+			{
+				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+			}
+		}
+		
+		private void attach_Animals(Animal entity)
+		{
+			this.SendPropertyChanging();
+			entity.AnimalSpecy = this;
+		}
+		
+		private void detach_Animals(Animal entity)
+		{
+			this.SendPropertyChanging();
+			entity.AnimalSpecy = null;
 		}
 	}
 }

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace HumaneSocietyConsole
 {
-    class Manager : IAnimal
+    partial class Manager : IAnimal
     {
         private int species;
         private string name;
@@ -18,6 +18,8 @@ namespace HumaneSocietyConsole
         private int room;
         private bool shots;
         private bool adopted;
+        private int? selectedAnimalID;
+        private int? selectedAdopterID;
     
         public int Species { get { return species; } }
         public string Name { get { return name; } set { Name = value; } }
@@ -114,10 +116,15 @@ namespace HumaneSocietyConsole
             }
             return speciesCode;
         }
-        protected int AssignRoom(Animal animal)
+        private int AssignRoom(Animal animal)
         {
-
-            room = UI.GetInt("Enter room number (1-250): ");
+            int roomCapacity = 250;
+            int room = UI.GetInt($"Enter room number (1-{roomCapacity}): ");
+            while(room > roomCapacity || room < 1)
+            {
+                Console.WriteLine("Room does not exist.");
+                room = UI.GetInt($"Enter room number (1-{roomCapacity}): ");
+            }
 
             while (!Connection.SaveRoomToDatabase(animal.AnimalID, room))
             {
@@ -125,10 +132,44 @@ namespace HumaneSocietyConsole
             }
             return room;       
         }
+        private void AdoptAnimal(int animalID)
+        {
+            AddNewAdoptAnimalPage();
+            var adopter = GetAdopter();
+            var animal = Connection.GetAnimal(animalID);
+            if(GetAdoptionPayment(animal))
+            {
+                Connection.SaveAdoptionToDatabase(adopter, animal);
+            }
+
+            Console.WriteLine("Press enter to return to Main Menu");
+            Console.ReadLine();
+            Console.Clear();
+            UI.DisplayMainMenu();
+        }
+        private bool GetAdoptionPayment(Animal animal)
+        {
+            Console.WriteLine($"Adoption fee: ${decimal.Round(animal.AnimalSpecy.AdoptionCost, 2)}");
+            if(UI.GetYesNoBool("Payment recieved "))
+            {
+                Console.WriteLine("Thank you. Payment accepted.");
+                return true;
+            }
+            else
+            {
+                Console.WriteLine("We cannot release an animal unless payment accepted. Sorry.");
+                return false;
+            }
+        }
         private void AddNewAnimalPage()
         {
             Console.Clear();
             Console.WriteLine("----------ADD NEW ANIMAL---------");
+        }
+        private void AddNewAdoptAnimalPage()
+        {
+            Console.Clear();
+            Console.WriteLine("----------ADOPT ANIMAL---------");
         }
     }
 }

@@ -14,15 +14,8 @@
       <Column Name="AnimalAdopted" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
       <Column Name="AnimalAdopterID" Type="System.Int32" DbType="Int" CanBeNull="true" />
       <Association Name="Animal_Room" Member="Rooms" ThisKey="AnimalID" OtherKey="AnimalID" Type="Room" />
-      <Association Name="AnimalSpecy_Animal" Member="AnimalSpecy" ThisKey="AnimalSpecies" OtherKey="SpeciesID" Type="AnimalSpecy" IsForeignKey="true" />
       <Association Name="Adopter_Animal" Member="Adopter" ThisKey="AnimalAdopterID" OtherKey="AdopterID" Type="Adopter" IsForeignKey="true" />
-    </Type>
-  </Table>
-  <Table Name="dbo.AnimalSpecies" Member="AnimalSpecies">
-    <Type Name="AnimalSpecy">
-      <Column Name="SpeciesID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
-      <Column Name="SpeciesName" Type="System.String" DbType="VarChar(255)" CanBeNull="true" />
-      <Association Name="AnimalSpecy_Animal" Member="Animals" ThisKey="SpeciesID" OtherKey="AnimalSpecies" Type="Animal" />
+      <Association Name="AnimalSpecy_Animal" Member="AnimalSpecy" ThisKey="AnimalSpecies" OtherKey="SpeciesID" Type="AnimalSpecy" IsForeignKey="true" />
     </Type>
   </Table>
   <Table Name="dbo.Rooms" Member="Rooms">
@@ -41,6 +34,14 @@
       <Column Name="AdopterNewPetOwner" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
       <Column Name="AdopterBio" Type="System.String" DbType="VarChar(MAX)" CanBeNull="true" />
       <Association Name="Adopter_Animal" Member="Animals" ThisKey="AdopterID" OtherKey="AnimalAdopterID" Type="Animal" />
+    </Type>
+  </Table>
+  <Table Name="dbo.AnimalSpecies" Member="AnimalSpecies">
+    <Type Name="AnimalSpecy">
+      <Column Name="SpeciesID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="SpeciesName" Type="System.String" DbType="VarChar(255)" CanBeNull="true" />
+      <Column Name="AdoptionCost" Type="System.Decimal" DbType="Money NOT NULL" CanBeNull="false" />
+      <Association Name="AnimalSpecy_Animal" Member="Animals" ThisKey="SpeciesID" OtherKey="AnimalSpecies" Type="Animal" />
     </Type>
   </Table>
 </Database>
