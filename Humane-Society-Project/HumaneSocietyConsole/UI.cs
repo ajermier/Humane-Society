@@ -74,9 +74,10 @@ namespace HumaneSocietyConsole
             Console.WriteLine(" 2 - Import Animals From CSV");
             Console.WriteLine(" 3 - Update Existing Animal");
             Console.WriteLine(" 4 - Display Animal Information");
-            Console.WriteLine(" 5 - Add Adopter");
-            Console.WriteLine(" 6 - Search/Adopt Animals");
-            Console.WriteLine(" 7 - Exit");
+            Console.WriteLine(" 5 - Display Adopter Information");
+            Console.WriteLine(" 6 - Add Adopter");
+            Console.WriteLine(" 7 - Search/Adopt Animals");
+            Console.WriteLine(" 8 - Exit");
             NavigateMainMenu(UI.GetInt("Your Selection: "));
         }
         private static void NavigateMainMenu(int selection)
@@ -88,7 +89,8 @@ namespace HumaneSocietyConsole
                     newSession1.GetNewAnimal();
                     break;
                 case 2:
-                    //
+                    Manager newSession2 = new Manager();
+                    newSession2.ImportFromCSV();
                     break;
                 case 3:
                     Manager newSession3 = new Manager();
@@ -100,13 +102,17 @@ namespace HumaneSocietyConsole
                     break;
                 case 5:
                     Manager newSession5 = new Manager();
-                    newSession5.AddAdopter(newSession5);
+                    newSession5.GetAdopterInfoForDisplay();
                     break;
                 case 6:
                     Manager newSession6 = new Manager();
-                    newSession6.AdopterSearchMenu(newSession6);
+                    newSession6.AddAdopter(newSession6);
                     break;
                 case 7:
+                    Manager newSession7 = new Manager();
+                    newSession7.AdopterSearchMenu(newSession7);
+                    break;
+                case 8:
                     break;
                 default:
                     NavigateMainMenu(UI.GetInt("Invalid selection. Try again: "));

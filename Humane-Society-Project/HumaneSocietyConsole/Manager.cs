@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.IO;
 
 namespace HumaneSocietyConsole
 {
@@ -19,7 +20,6 @@ namespace HumaneSocietyConsole
         private bool shots;
         private bool adopted;
         private int? selectedAnimalID;
-        private int? selectedAdopterID;
     
         public int Species { get { return species; } }
         public string Name { get { return name; } set { Name = value; } }
@@ -39,6 +39,7 @@ namespace HumaneSocietyConsole
         public void GetNewAnimal()
         {
             AddNewAnimalPage();
+
             species = GetSpecies();
             name = UI.GetString("Enter name: ");
             sex = GetSex();
@@ -47,8 +48,9 @@ namespace HumaneSocietyConsole
             color = UI.GetString("Enter color: ");
             food = UI.GetDouble("Enter lbs. of food consumed per week: ");
             shots = UI.GetYesNoBool("Recieved immunizations ");
-            adopted = false;
-            var animal = Connection.SaveAnimalToDatabase(Species, Name, Sex, Age, Weight, Color, Food, Shots, Adopted);
+
+            var animal = Connection.SaveAnimalToDatabase(Species, Name, Sex, Age, Weight, Color, Food, Shots);
+
             room = AssignRoom(animal);
         }
         protected string GetSex()
@@ -161,6 +163,44 @@ namespace HumaneSocietyConsole
                 return false;
             }
         }
+        public void ImportFromCSV()
+        {
+            string file = UI.GetString("Enter CSV file path: ");
+            int count = 0;
+
+            ImportFromCSVPage();
+
+            if (CheckFile(file))
+            {
+                var imported = GetCSVdata(file);
+                foreach(string[] s in imported)
+                {
+                    var animal = Connection.SaveAnimalToDatabase(Convert.ToInt32(s[0]), s[1], s[2], Convert.ToInt32(s[3]), Convert.ToDouble(s[4]), s[5], Convert.ToDouble(s[6]), Convert.ToBoolean(s[7]));
+                    room = AssignRoom(animal);
+
+                    count++;
+                }
+                Console.WriteLine($"Completed importing {count} animals.");
+            }
+            else
+            {
+                Console.WriteLine("File does not exist.");
+            }
+                Console.Write("Press enter to return to Main Menu.");
+                Console.ReadLine();
+                Console.Clear();
+                UI.DisplayMainMenu();
+        }
+        private List<string[]> GetCSVdata(string file)
+        {
+            var d = File.ReadLines(file).Select(l => l.Split(',')).Select(s => s).ToList();
+
+            return d;
+        }
+        private bool CheckFile(string file)
+        {
+            return File.Exists(file) ? true : false;
+        }
         private void AddNewAnimalPage()
         {
             Console.Clear();
@@ -170,6 +210,11 @@ namespace HumaneSocietyConsole
         {
             Console.Clear();
             Console.WriteLine("----------ADOPT ANIMAL---------");
+        }
+        private void ImportFromCSVPage()
+        {
+            Console.Clear();
+            Console.WriteLine("----------IMPORT FROM FILE---------");
         }
     }
 }

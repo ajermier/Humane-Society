@@ -8,7 +8,7 @@ namespace HumaneSocietyConsole
 {
     static class Connection
     {
-        public static Animal SaveAnimalToDatabase(int species, string name, string sex, int age, double weight, string color, double food, bool shots, bool adopted )
+        public static Animal SaveAnimalToDatabase(int species, string name, string sex, int age, double weight, string color, double food, bool shots)
         {
             DatabaseConnectionDataContext database = new DatabaseConnectionDataContext();
 
@@ -21,7 +21,7 @@ namespace HumaneSocietyConsole
             newAnimal.AnimalColor = color;
             newAnimal.AnimalFood = food;
             newAnimal.AnimalShots = shots;
-            newAnimal.AnimalAdopted = adopted;
+            newAnimal.AnimalAdopted = false;
 
             database.Animals.InsertOnSubmit(newAnimal);
 
@@ -223,6 +223,14 @@ namespace HumaneSocietyConsole
             DatabaseConnectionDataContext database = new DatabaseConnectionDataContext();
 
             var list = database.Animals.Where(w => w.AnimalSpecies == speciesCode).Where(ww => ww.AnimalAdopted == false).Select(s => s).ToList();
+
+            return list;
+        }
+        public static List<Adopter> ReturnAdopterList()
+        {
+            DatabaseConnectionDataContext database = new DatabaseConnectionDataContext();
+
+            var list = database.Adopters.OrderBy(o => o.AdopterName).Select(s => s).ToList();
 
             return list;
         }

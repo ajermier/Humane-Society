@@ -51,12 +51,12 @@ namespace HumaneSocietyConsole
             Console.WriteLine($"Animal ID: {animal.AnimalID}");
             Console.WriteLine($"Species: {animal.AnimalSpecy.SpeciesName}");
             Console.WriteLine($"Name: {animal.AnimalName}");
-            Console.WriteLine($"Gender: {animal.AnimalSex}");
+            Console.WriteLine($"Gender: {(animal.AnimalSex == "M" ? "Male" : "Female")}");
             Console.WriteLine($"Age: {animal.AnimalAge} years");
             if (animal.AnimalAdopted == false) Console.WriteLine($"Weight: {animal.AnimalWeight} lbs");
-            Console.WriteLine($"Color: {animal.AnimalColor}");
+            Console.WriteLine($"Color: {animal.AnimalColor.ToLower()}");
             if (animal.AnimalAdopted == false) Console.WriteLine($"Food: {animal.AnimalFood} lbs/wk");
-            Console.WriteLine($"Immunizations Recieved: {animal.AnimalShots}");
+            Console.WriteLine($"Immunizations Recieved: {(animal.AnimalShots ? "Yes" : "No")}");
             if (animal.AnimalAdopted == false) Console.WriteLine($"Room: {room.RoomID}");
             if (animal.AnimalAdopted == true) Console.WriteLine($"Adopted by: {animal.Adopter.AdopterName}");
             if (animal.AnimalAdopted == true) Console.WriteLine($"Adopter ID: {animal.Adopter.AdopterID}");

@@ -44,6 +44,14 @@ namespace HumaneSocietyConsole
             newPetOwner = UI.GetYesNoBool("New pet owner ");
             bio = UI.GetString("Enter adopter bio: ");
         }
+        public void GetAdopterInfoForDisplay()
+        {
+            AdopterInfoPage();
+            var adopterList = Connection.ReturnAdopterList();
+            DisplaySelectFromList(adopterList);
+            Adopter adopter = SelectAdopterFromList(adopterList);
+            DisplayAdopter(adopter);
+        }
         public void AdopterSearchMenu(Manager manager)
         {
             if (count < 1) AdopterSearchPage();
@@ -145,6 +153,51 @@ namespace HumaneSocietyConsole
                 }
             }
         }
+        private void DisplaySelectFromList(List<Adopter> list)
+        {
+            if (list.Count == 0)
+            {
+                Console.Write("Sorry we have no adopters on record. Press enter to return to Main Menu.");
+                Console.ReadLine();
+                Console.Clear();
+                UI.DisplayMainMenu();
+            }
+            else
+            {
+                Console.WriteLine("Adopters: ");
+                foreach (Adopter a in list)
+                {
+                    Console.WriteLine($"ID# {a.AdopterID} {a.AdopterName}.");
+                }
+            }
+        }
+        private Adopter SelectAdopterFromList(List<Adopter> list)
+        {
+            int adopterID = UI.GetInt("Enter ID: ");
+
+            while (!list.Exists(e => e.AdopterID == adopterID))
+            {
+                Console.WriteLine("ID not found. Try again.");
+                adopterID = UI.GetInt("Enter ID: ");
+            }
+
+            return list.Where(w => w.AdopterID == adopterID).Select(s => s).First();
+        }
+        private void DisplayAdopter(Adopter adopter)
+        {
+            AdopterInfoPage();
+            Console.WriteLine($"Adopter ID: {adopter.AdopterID}");
+            Console.WriteLine($"Adopter Name: {adopter.AdopterName}");
+            Console.WriteLine($"Phone: {adopter.AdopterPhone}");
+            Console.WriteLine($"Homeowner/renter: {(adopter.AdopterHomeOwner ? "Yes." : "No.")}");
+            Console.WriteLine($"New pet owner: {(adopter.AdopterNewPetOwner ? "Yes." : "No.")}");
+            Console.WriteLine($"Bio: {adopter.AdopterBio}");
+            Console.WriteLine();
+            Console.Write("Press Enter to return to Main Menu.");
+            Console.ReadLine();
+            Console.Clear();
+            UI.DisplayMainMenu();
+        }
         private Adopter GetAdopter()
         {
             if(UI.GetYesNoBool("Is the adopter in the system "))
@@ -163,6 +216,11 @@ namespace HumaneSocietyConsole
                 return AddNewAdopter(this);
             }
         }
+        private void PrintAdopters()
+        {
+            Console.WriteLine("Adopters: ");
+
+        }
         private void SelectFromList(List<Animal> list)
         {
             Console.WriteLine();
@@ -176,6 +234,11 @@ namespace HumaneSocietyConsole
         {
             Console.Clear();
             Console.WriteLine("----------SEARCH ANIMALS---------");
+        }
+        private void AdopterInfoPage()
+        {
+            Console.Clear();
+            Console.WriteLine("----------ADOPTER INFO---------");
         }
     }
 }
