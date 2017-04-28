@@ -15,11 +15,6 @@ namespace HumaneSocietyConsole
         double Weight { get; set; }
         string Color { get; set; }
         double Food { get; set; }
-        int Room { get; set; }
         bool Shots { get; set; }
-        bool Adopted { get; set; }
-
-        Animal GetAnimalID();
-        int GetAnimalID(List<Animal> list);
     }
 }

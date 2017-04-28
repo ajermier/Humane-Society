@@ -16,7 +16,7 @@ namespace HumaneSocietyConsole
         private int count = 0;
         private List<Animal> searchList;
 
-        public void AddAdopter(Manager manager)
+        public void AddAdopter()
         {
             AddAdopterPage();
             GetAdopterInfo();
@@ -26,7 +26,7 @@ namespace HumaneSocietyConsole
             Console.Clear();
             UI.DisplayMainMenu();
         }
-        public Adopter AddNewAdopter(Manager manager)
+        public Adopter AddNewAdopter()
         {
             AddAdopterPage();
             GetAdopterInfo();
@@ -34,6 +34,7 @@ namespace HumaneSocietyConsole
             Console.Write("Press Enter to return.");
             Console.ReadLine();
             Console.Clear();
+
             return adopter;
         }
         private void GetAdopterInfo()
@@ -52,11 +53,11 @@ namespace HumaneSocietyConsole
             Adopter adopter = SelectAdopterFromList(adopterList);
             DisplayAdopter(adopter);
         }
-        public void AdopterSearchMenu(Manager manager)
+        public void AdopterSearchMenu()
         {
             if (count < 1) AdopterSearchPage();
             if (count < 4) Console.WriteLine(" 1 - Refine Search");
-            Console.WriteLine(" 2 - Select animal from list to adopt");
+            if (count > 0) Console.WriteLine(" 2 - Select animal from list to adopt");
             Console.WriteLine(" 3 - Exit");
             int input = UI.GetInt("Your Selection: ");
             NavigateAdopterSearchMenu(input);
@@ -72,7 +73,7 @@ namespace HumaneSocietyConsole
                         searchList = Connection.FilterBySpecies(GetSpecies());
                         DisplaySearchResults(searchList);
                         count++;
-                        AdopterSearchMenu(this);
+                        AdopterSearchMenu();
                     }
                     else if(count < 2)
                     {
@@ -80,7 +81,7 @@ namespace HumaneSocietyConsole
                         searchList = FilterBySex(GetSex(), searchList);
                         DisplaySearchResults(searchList);
                         count++;
-                        AdopterSearchMenu(this);
+                        AdopterSearchMenu();
                     }
                     else if(count < 3)
                     {
@@ -88,7 +89,7 @@ namespace HumaneSocietyConsole
                         searchList = FilterByAge(UI.GetInt("Enter maximum age to search for: "), searchList);
                         DisplaySearchResults(searchList);
                         count++;
-                        AdopterSearchMenu(this);
+                        AdopterSearchMenu();
                     }
                     break;
                 case 2:
@@ -122,16 +123,14 @@ namespace HumaneSocietyConsole
             Console.WriteLine();
             if (list.Count == 0)
             {
-                Console.Write("Sorry we have no animals meeting that search criteria. Press enter to return to Main Menu.");
-                Console.ReadLine();
-                Console.Clear();
-                UI.DisplayMainMenu();
+                Console.Write("Sorry we have no animals meeting that search criteria.");
+                UI.ReturnToMainMenu();
             }
             else
             {
                 foreach (Animal a in list)
                 {
-                    Console.WriteLine($"ID {a.AnimalID} is a {a.AnimalColor} {a.AnimalSpecy.SpeciesName} named {a.AnimalName} who is a {a.AnimalAge} year old {a.AnimalSex}.");
+                    Console.WriteLine($"ID {a.AnimalID} is a {a.AnimalColor} {a.AnimalSpecy.SpeciesName} named {a.AnimalName} who is a {a.AnimalAge} year old {(a.AnimalSex == "M" ? "male" : "female")}.");
                 }
             }
         }
@@ -140,10 +139,8 @@ namespace HumaneSocietyConsole
             Console.WriteLine();
             if (list.Count == 0)
             {
-                Console.Write("Sorry we have no animals on record. Press enter to return to Main Menu.");
-                Console.ReadLine();
-                Console.Clear();
-                UI.DisplayMainMenu();
+                Console.Write("Sorry we have no animals on record.");
+                UI.ReturnToMainMenu();
             }
             else
             {
@@ -157,10 +154,8 @@ namespace HumaneSocietyConsole
         {
             if (list.Count == 0)
             {
-                Console.Write("Sorry we have no adopters on record. Press enter to return to Main Menu.");
-                Console.ReadLine();
-                Console.Clear();
-                UI.DisplayMainMenu();
+                Console.Write("Sorry we have no adopters on record.");
+                UI.ReturnToMainMenu();
             }
             else
             {
@@ -186,6 +181,7 @@ namespace HumaneSocietyConsole
         private void DisplayAdopter(Adopter adopter)
         {
             AdopterInfoPage();
+
             Console.WriteLine($"Adopter ID: {adopter.AdopterID}");
             Console.WriteLine($"Adopter Name: {adopter.AdopterName}");
             Console.WriteLine($"Phone: {adopter.AdopterPhone}");
@@ -193,10 +189,8 @@ namespace HumaneSocietyConsole
             Console.WriteLine($"New pet owner: {(adopter.AdopterNewPetOwner ? "Yes." : "No.")}");
             Console.WriteLine($"Bio: {adopter.AdopterBio}");
             Console.WriteLine();
-            Console.Write("Press Enter to return to Main Menu.");
-            Console.ReadLine();
-            Console.Clear();
-            UI.DisplayMainMenu();
+
+            UI.ReturnToMainMenu();
         }
         private Adopter GetAdopter()
         {
@@ -213,17 +207,8 @@ namespace HumaneSocietyConsole
             }
             else
             {              
-                return AddNewAdopter(this);
+                return AddNewAdopter();
             }
-        }
-        private void PrintAdopters()
-        {
-            Console.WriteLine("Adopters: ");
-
-        }
-        private void SelectFromList(List<Animal> list)
-        {
-            Console.WriteLine();
         }
         private void AddAdopterPage()
         {

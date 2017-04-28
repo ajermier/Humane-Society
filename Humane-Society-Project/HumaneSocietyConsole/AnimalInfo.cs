@@ -8,13 +8,13 @@ namespace HumaneSocietyConsole
 {
     partial class Manager : IAnimal
     {
-        public void UpdateAnimal(Manager manager)
+        public void UpdateAnimal()
         {
             UpdateAnimalNewPage();
             PrintUnadoptedAnimals();
             DisplayUpdateMenu(GetAnimalID());
         }
-        public void GetAnimalInfo(Manager manager)
+        public void GetAnimalInfo()
         {
             AnimalInfoNewPage();
             PrintAdoptedAnimals();
@@ -47,7 +47,9 @@ namespace HumaneSocietyConsole
         private void DisplayAnimalInfo(Animal animal)
         {
             var room = Connection.GetRoom(animal);
+
             AnimalInfoNewPage();
+
             Console.WriteLine($"Animal ID: {animal.AnimalID}");
             Console.WriteLine($"Species: {animal.AnimalSpecy.SpeciesName}");
             Console.WriteLine($"Name: {animal.AnimalName}");
@@ -61,10 +63,8 @@ namespace HumaneSocietyConsole
             if (animal.AnimalAdopted == true) Console.WriteLine($"Adopted by: {animal.Adopter.AdopterName}");
             if (animal.AnimalAdopted == true) Console.WriteLine($"Adopter ID: {animal.Adopter.AdopterID}");
             Console.WriteLine();
-            Console.Write("Press Enter to return to Main Menu.");
-            Console.ReadLine();
-            Console.Clear();
-            UI.DisplayMainMenu();
+
+            UI.ReturnToMainMenu();
         }
         private void DisplayUpdateMenu(Animal animal)
         {

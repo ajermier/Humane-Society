@@ -16,9 +16,7 @@ namespace HumaneSocietyConsole
         private double weight;
         private string color;
         private double food;
-        private int room;
         private bool shots;
-        private bool adopted;
         private int? selectedAnimalID;
     
         public int Species { get { return species; } }
@@ -28,9 +26,7 @@ namespace HumaneSocietyConsole
         public double Weight { get { return weight; } set { Weight = value; } }
         public string Color { get { return color; } set { Color = value; } }
         public double Food { get { return food; } set { Food = value; } }
-        public int Room { get { return room; } set { Room = value; } }
         public bool Shots { get { return shots; } set { Shots = value; } }
-        public bool Adopted { get { return adopted; } set { Adopted = value; } }
 
         public Manager()
         {
@@ -51,7 +47,9 @@ namespace HumaneSocietyConsole
 
             var animal = Connection.SaveAnimalToDatabase(Species, Name, Sex, Age, Weight, Color, Food, Shots);
 
-            room = AssignRoom(animal);
+            AssignRoom(animal);
+
+            UI.ReturnToMainMenu();
         }
         protected string GetSex()
         {
@@ -118,7 +116,7 @@ namespace HumaneSocietyConsole
             }
             return speciesCode;
         }
-        private int AssignRoom(Animal animal)
+        private void AssignRoom(Animal animal)
         {
             int roomCapacity = 250;
             int room = UI.GetInt($"Enter room number (1-{roomCapacity}): ");
@@ -131,8 +129,7 @@ namespace HumaneSocietyConsole
             while (!Connection.SaveRoomToDatabase(animal.AnimalID, room))
             {
                 room = UI.GetInt("Enter room number: ");
-            }
-            return room;       
+            }      
         }
         private void AdoptAnimal(int animalID)
         {
@@ -144,10 +141,7 @@ namespace HumaneSocietyConsole
                 Connection.SaveAdoptionToDatabase(adopter, animal);
             }
 
-            Console.WriteLine("Press enter to return to Main Menu");
-            Console.ReadLine();
-            Console.Clear();
-            UI.DisplayMainMenu();
+            UI.ReturnToMainMenu();
         }
         private bool GetAdoptionPayment(Animal animal)
         {
@@ -176,7 +170,7 @@ namespace HumaneSocietyConsole
                 foreach(string[] s in imported)
                 {
                     var animal = Connection.SaveAnimalToDatabase(Convert.ToInt32(s[0]), s[1], s[2], Convert.ToInt32(s[3]), Convert.ToDouble(s[4]), s[5], Convert.ToDouble(s[6]), Convert.ToBoolean(s[7]));
-                    room = AssignRoom(animal);
+                    AssignRoom(animal);
 
                     count++;
                 }
@@ -186,10 +180,8 @@ namespace HumaneSocietyConsole
             {
                 Console.WriteLine("File does not exist.");
             }
-                Console.Write("Press enter to return to Main Menu.");
-                Console.ReadLine();
-                Console.Clear();
-                UI.DisplayMainMenu();
+
+            UI.ReturnToMainMenu();
         }
         private List<string[]> GetCSVdata(string file)
         {
