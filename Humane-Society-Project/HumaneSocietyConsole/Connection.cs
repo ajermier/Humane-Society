@@ -104,6 +104,7 @@ namespace HumaneSocietyConsole
             a.AdopterNewPetOwner = false;
             b.AnimalAdopted = true;
             b.AnimalAdopterID = a.AdopterID;
+            b.DateAdopted = DateTime.Now;
             RemoveAnimalFromRoom(c.RoomID);
 
             try

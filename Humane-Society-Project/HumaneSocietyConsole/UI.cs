@@ -115,7 +115,7 @@ namespace HumaneSocietyConsole
                 case 8:
                     break;
                 default:
-                    NavigateMainMenu(UI.GetInt("Invalid selection. Try again: "));
+                    NavigateMainMenu(GetInt("Invalid selection. Try again: "));
                     break;
             }
         }

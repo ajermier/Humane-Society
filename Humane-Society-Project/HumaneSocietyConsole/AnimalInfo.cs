@@ -62,6 +62,8 @@ namespace HumaneSocietyConsole
             if (animal.AnimalAdopted == false) Console.WriteLine($"Room: {room.RoomID}");
             if (animal.AnimalAdopted == true) Console.WriteLine($"Adopted by: {animal.Adopter.AdopterName}");
             if (animal.AnimalAdopted == true) Console.WriteLine($"Adopter ID: {animal.Adopter.AdopterID}");
+            if (animal.AnimalAdopted == false) Console.WriteLine($"Date added: {(animal.DateAdded.Value).ToString("M-d-yy")}");
+            if (animal.AnimalAdopted == true) Console.WriteLine($"Date adopted: {(animal.DateAdopted.Value).ToString("M-d-yy")}");
             Console.WriteLine();
 
             UI.ReturnToMainMenu();
